@@ -1,6 +1,6 @@
 # test lab
 
-the idea behind test lab is to remove some of the friction of writing new scripts by letting you use a single hotkey to quickly test out the changes you make. normally this requires you to use 3 hotkeys: 
+the idea behind test lab is to take some of the friction out of writing new [AutoHotkey](https://www.autohotkey.com) scripts by letting you use a single hotkey to quickly test out your changes. normally this process requires 3 hotkeys: 
 
 1: <kbd>ctrl</kbd> + <kbd>s</kbd> to save your changes  
 2: a hotkey to reload the script  
@@ -12,14 +12,16 @@ these arent exactly a lot of effort on their own, but when you are making lots o
 
 ## usage
 
-- run any one of the lab files.  (i will use `lab 3.ahk` as an example here)  
-- focus on an .ahk script in your editor (see supported editors below)  
+- run any one of the lab files  (i will use `lab 3.ahk` as an example here)  
+- focus on an .ahk script in your editor  (see supported editors below)  
 - press <kbd>alt</kbd> + <kbd>3</kbd> to see a list of labels you can run  
-- <kbd>ctrl</kbd> + <kbd>3</kbd> will run the default label, which can be set in the `settings` sub-menu  
+- <kbd>ctrl</kbd> + <kbd>3</kbd> will run the default label, which can be set in the `options` sub-menu  
 
 once a label is set as default, the script will be tied to that lab number and both hotkeys can be used even when the script youre working on isnt focused anymore.  if you want to remove the default at some point and choose another script the select "reset default" in the sub-menu  
 
 if the script you are running labels from is the one that is focused in the editor, then <kbd>ctrl</kbd> + <kbd>s</kbd> will be sent before the label is run  
+
+to make it even easier to get new ideas started, there is a gui for creating new test files that can be run from the `options` sub-menu or from a hotkey
 
 &nbsp;  
 
@@ -45,14 +47,26 @@ sublime_text_active_file()
 
 &nbsp;
 
-## settings
+## [settings.ini](https://github.com/davebrny/test-lab/blob/master/settings.ini)
 
 #### labs 
 
-only the numbers that are stated in the ini settings file will used as labs  
+labs 0, 1, 2 and 3 are enabled by default. to enable the others add the number to the `labs` key, separated by a comma
 
 > each lab sets the all the same hotkeys so you only need to have one lab script added to the startup folder and then you can start the other labs from that one  
 
 #### save before  
 
-set `save_before` to `false` if you dont want the script you are working on to be saved before a label is run
+set this to `false` if you dont want the script you are working on to be saved when a label is run
+
+#### new test file hotkey
+
+the hotkey that will be used to open the file creation gui, e.g. `^!n`  
+
+### test folder
+
+the folder where new test files will be created
+
+### editor path
+
+if you want the new test file to be opened after its created then add the path to your editor, otherwise leave this empty 

@@ -1,7 +1,6 @@
 ﻿/*
 [script info]
-version     = 0.1
-version     = 0.1.1
+version     = 0.2
 description = quick code testing using a single hotkey
 author      = davebrny
 source      = https://github.com/davebrny/test-lab
@@ -24,6 +23,8 @@ loop, parse, labs, `, , % a_space   ;# set hotkeys
         hotkey, % default_modifier . a_loopField, run_default_label
         }
     }
+if (new_file_hotkey)
+    hotkey, % new_file_hotkey, gui_new_file
 
 loop, %0%    ;# get parameters passed to the script
     label_name .= (label_name ? a_space : "") . %a_index%
@@ -56,33 +57,34 @@ if (default_label)
 menu, lab_main, add, % lab_name, lab_menu_run
 menu, lab_main, disable, % lab_name
 menu, lab_main, add
-    ; default menu title
+    ; options menu
+menu, lab_options, add, New Test File, gui_new_file
+menu, lab_options, add
 if (default_label)
-    menu, lab_default, add, Reset Default, lab_menu_reset
+    menu, lab_options, add, Reset Default, lab_menu_reset
 else
     {
-    menu, lab_default, add,     Choose Default:, lab_menu_reset
-    menu, lab_default, disable, Choose Default:
+    menu, lab_options, add,     Choose Default:, lab_menu_reset
+    menu, lab_options, disable, Choose Default:
     }
-menu, lab_default, add
+menu, lab_options, add
     ; lab labels
 loop, parse, lab_labels, `n
     {
     menu, lab_main,    add, % a_loopField, lab_menu_run
-    menu, lab_default, add, % a_loopField, lab_menu_default
     menu, lab_main,   icon, % a_loopField, % a_scriptDir "\.data\" lab_number ".ico"
+    menu, lab_options, add, % a_loopField, lab_menu_default
     if (a_loopField = default_label)
         {
         menu, lab_main,    default, % a_loopField
-        menu, lab_default, default, % a_loopField
+        menu, lab_options, default, % a_loopField
         }
     }
-
 menu, lab_main, add
-menu, lab_main, add, Settings, :lab_default
+menu, lab_main, add, Options, :lab_options
 menu, lab_main,    show
 menu, lab_main,    delete
-menu, lab_default, delete
+menu, lab_options, delete
 return
 
 
@@ -219,6 +221,51 @@ timer_tl(){
     setTimer, timer_tl, off
     toolTip,
 }
+
+
+gui_new_file:
+if (test_folder = "")
+    {
+    fileSelectFolder, output, , , Choose a folder for new test files
+    if (errorLevel != 1) ; if folder was chosen
+        {
+        iniWrite, % output, % a_scriptDir "\settings.ini", settings, test_folder
+        test_folder := output
+        }
+    else return
+    }
+gui add, edit, x10 y5 w160 h20 vedit_box, file name
+gui add, text, x175 y8 w120 h23, .ahk
+gui add, button, x10 y40 w75 h30 ggui_close, Cancel
+gui add, button, x95 y40 w75 h30 ggui_create_file, Create
+gui show, w210 h80, Test Lab
+return
+
+guiEscape:
+gui_close:
+gui destroy
+return
+
+
+gui_create_file:
+guiControlGet, edit_text, , edit_box
+if regExMatch(edit_text, "[\Q\\/:*?""<>|\E]")
+    msgbox, A file name can't contain any of the following characters \/:*?"<>|
+else if fileExist(test_folder "\" edit_text ".ahk")
+    msgbox, "%edit_text%.ahk" already exists
+else    ; create file
+    {
+    gui destroy
+    filename := test_folder "\" edit_text ".ahk"
+    fileRead, output, % a_scriptDir "\.data\template.ahk"
+    output := strReplace(output, "`%test_lab_label_name`%", edit_text)
+    output := strReplace(output, a_space, "_")
+    fileAppend, % output, % filename
+    if (editor_path)
+        run, "%editor_path%" "%filename%"
+    else msg_tl(edit_text ".ahk created")
+    }
+return
 
 ; ==============================================================================
 
