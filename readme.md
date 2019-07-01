@@ -1,6 +1,6 @@
 # test lab
 
-the idea behind test lab is to take some of the friction out of writing new [AutoHotkey](https://www.autohotkey.com) scripts by letting you use a single hotkey to quickly test out your changes. normally this process requires 3 hotkeys: 
+the idea behind test lab is to take some of the friction out of writing [AutoHotkey](https://www.autohotkey.com) scripts by letting you use a single hotkey to quickly test out your changes. normally this process requires 3 hotkeys: 
 
 1: <kbd>ctrl</kbd> + <kbd>s</kbd> to save your changes  
 2: a hotkey to reload the script  
@@ -27,19 +27,25 @@ to make it even easier to get new ideas started, there is a gui for creating new
 
 ## limitations
 
+\-  for test lab to work at all you need to be able to get the script path from your editor's title bar or by some other method
+
 \- this does not run whole files, only code that is under a label  
 
 \- since each lab script is restarted when a label is run, this means there is a slight delay from when you press the hotkey to the code executing  
 
-\-  for test lab to work at all you need to be able to get the script path from your editor's title bar or by some other method
-
 &nbsp;
 
-## suported editors
+## supported editors
 
+- atom  
+- __*__ notepad
+- notepad++
 - sublime text  
-&nbsp;
 
+> editors with a * at the start only show the filename in the titlebar and not the full path, so in these cases it will only work if a [folder](https://github.com/davebrny/test-lab#settingsini) has been added and the file can be found in the root of that folder   
+
+
+#### adding support  
 support for other editors can be added to the end of `\.data\script lab.ahk`.   the function should use the editor's process name (without .exe) at the start and `_active_file()` after it:    
 ```
 sublime_text_active_file()
@@ -63,10 +69,10 @@ set this to `false` if you dont want the script you are working on to be saved w
 
 the hotkey that will be used to open the file creation gui, e.g. `^!n`  
 
-### test folder
+#### test folder
 
 the folder where new test files will be created
 
-### editor path
+#### editor path
 
 if you want the new test file to be opened after its created then add the path to your editor, otherwise leave this empty 

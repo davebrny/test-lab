@@ -1,6 +1,6 @@
 ﻿/*
 [script info]
-version     = 0.2
+version     = 0.3
 description = quick code testing using a single hotkey
 author      = davebrny
 source      = https://github.com/davebrny/test-lab
@@ -8,7 +8,7 @@ source      = https://github.com/davebrny/test-lab
 
 
 run_lab:
-global default_label, lab_number
+global default_label, lab_number, test_folder
 lab_number := regExReplace(a_scriptName, "[^0-9]")
 menu, tray, icon, % a_scriptDir "\.data\" lab_number ".ico"
 
@@ -208,6 +208,7 @@ setup_lab_data(new_contents="") {
 active_file_tl() {
     winGet, process_name, processName, a
     splitPath, process_name, , , , process_name ; without .exe
+    process_name := convert_symbols(process_name)
     if isFunc(process_name "_active_file")
         return %process_name%_active_file()
 }
@@ -270,10 +271,51 @@ return
 ; ==============================================================================
 
 
+atom_active_file() {
+    winGetTitle, title, ahk_exe atom.exe
+    split := strSplit(title, chr(8212), a_space)  ; split at — (em dash) 
+    file_path := split[2] "\" split[1]
+    splitPath, % file_path, , , file_ext
+    if fileExist(file_path) and (file_ext = "ahk")
+        return file_path
+}
+
+
+notepad_active_file() {
+    if (test_folder)
+        {
+        winGetTitle, title, ahk_exe notepad.exe
+        title := strReplace(title, " - Notepad", "")
+        splitPath, title, filename, , file_ext
+        if fileExist(test_folder "\" filename) and (file_ext = "ahk")
+            return test_folder "\" filename
+        }
+}
+
+
+notepadplusplus_active_file() {
+    winGetTitle, title, ahk_exe notepad++.exe
+    splitPath, title, , file_dir, file_ext, name_no_ext
+    split := strSplit(file_ext, "-", a_space)
+    file_path := file_dir "\" name_no_ext "." split[1]
+    if inStr(file_path, "*", , 1)    ;if unsaved file
+        stringTrimLeft, file_path, file_path, 1
+    if fileExist(file_path) and (split[1] = "ahk")
+        return file_path
+}
+
+
 sublime_text_active_file() {
     winGetTitle, title, ahk_exe sublime_text.exe 
     splitPath, title, , file_dir, file_ext, name_no_ext
     split := strSplit(file_ext, a_space)    ; remove project name or • from an unsaved file
     if (split[1] = "ahk")
         return file_dir "\" name_no_ext "." split[1]
+}
+
+
+convert_symbols(string) {    ; (for process names that contains symbols that cant be used in a function name)
+    for this, that in {"++":"plusplus", "@":"at"}
+        stringReplace, string, string, % this, % that, all
+    return string
 }
