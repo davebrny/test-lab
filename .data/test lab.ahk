@@ -1,6 +1,7 @@
 ﻿/*
 [script info]
 version     = 0.1
+version     = 0.1.1
 description = quick code testing using a single hotkey
 author      = davebrny
 source      = https://github.com/davebrny/test-lab
@@ -69,6 +70,7 @@ loop, parse, lab_labels, `n
     {
     menu, lab_main,    add, % a_loopField, lab_menu_run
     menu, lab_default, add, % a_loopField, lab_menu_default
+    menu, lab_main,   icon, % a_loopField, % a_scriptDir "\.data\" lab_number ".ico"
     if (a_loopField = default_label)
         {
         menu, lab_main,    default, % a_loopField
