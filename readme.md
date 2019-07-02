@@ -46,9 +46,9 @@ to make it even easier to get new ideas started, there is a gui for creating new
 
 
 #### adding support  
-support for other editors can be added to the end of `\.data\script lab.ahk`.   the function should use the editor's process name (without .exe) at the start and `_active_file()` after it:    
+support for other editors can be added to the end of `\.data\script lab.ahk`.   the function should use the editor's process name (without .exe) at the start and `_active_file_tl()` after it:    
 ```
-sublime_text_active_file()
+sublime_text_active_file_tl()
 ```
 
 &nbsp;
