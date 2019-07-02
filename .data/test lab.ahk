@@ -1,6 +1,6 @@
 ﻿/*
 [script info]
-version     = 0.5
+version     = 0.5.1
 description = quick code testing using a single hotkey
 author      = davebrny
 source      = https://github.com/davebrny/test-lab
@@ -166,7 +166,9 @@ lab_labels_tl(byRef lab_labels_tl, byRef script_path_tl) {
     lab_labels_tl := ""
     script_path_tl := lab_path_tl()
     fileRead, output, % script_path_tl
-    output := strReplace(output, "::")
+    if inStr(output, "/*") or inStr(output, ";")
+        output := strip_comments_tl(output)
+    output := strReplace(output, ":" ":")    ; remove hotkey symbol 
     if inStr(output, ":")   ; possible label name
         {
         strReplace(output, ":", "", colon_count)
@@ -212,6 +214,60 @@ setup_lab_data_tl(new_contents="") {
         file.write(new_contents)
         file.close()
         }
+}
+
+
+strip_comments_tl(string) {
+        ; #strip comment blocks
+    if inStr(string, "/*")
+        {
+        original_string := string
+        if inStr(string, "`r`n")
+            stringReplace, string, string, `r`n, `n, all
+
+        if (subStr(string, 1, 2) = "/*")               ; if at very first line
+            stringReplace, string, string, % "/*", % "`n/*"
+        strReplace(string, "`n/*", "", block_start)    ; get number of blocks
+        strReplace(string, "`n*/", "", block_end)
+        block_count := (block_start > block_end) ? (block_end) : (block_start)
+        loop, % block_count
+            {
+            if (a_index = 1)                 ; get text before 1st block
+                {
+                stringGetPos, block_start, string, % "`n/*", L1
+                stringMid, first_section, string, block_start, , L
+                new_string .= first_section "`n"
+                }
+            else                             ; every other loop (text between blocks)
+                {
+                stringGetPos, block_start, string, % "`n/*", L%a_index%
+                stringMid, middle_sections, string, block_start, , L
+                stringGetPos, block_end, middle_sections, % "`n*/", R1,
+                stringMid, middle_sections, middle_sections, block_end + 5
+                new_string .= middle_sections "`n"
+                }
+            }                                ; text after last block 
+        stringGetPos, block_end, string, % "`n*/", R1
+        stringMid, end_section, string, block_end + 5
+        new_string .= end_section
+
+        if inStr(original_string, "`r`n")
+            stringReplace, new_string, new_string, `n, `r`n, all
+        string := new_string
+        }
+
+        ; #strip line comments
+    if inStr(string, ";")
+        {
+        loop, parse, string, `n, `r
+            {
+            if (inStr(Ltrim(a_loopField), ";") = 1)
+                continue    ; skip line comments
+            new_lines .= (new_lines = "" ? "":"`r`n") . a_loopField
+            }
+        string := new_lines
+        }
+    return string
 }
 
 
