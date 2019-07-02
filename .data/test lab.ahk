@@ -1,6 +1,6 @@
 ﻿/*
 [script info]
-version     = 0.4.1
+version     = 0.5
 description = quick code testing using a single hotkey
 author      = davebrny
 source      = https://github.com/davebrny/test-lab
@@ -15,14 +15,9 @@ menu, tray, icon, % a_scriptDir "\.data\" lab_number_tl ".ico"
 settings_tl("user", "settings")
 settings_tl("lab", lab_number_tl)
 
-loop, parse, labs_tl, `, , % a_space   ;# set hotkeys
-    {
-    if a_loopField is number
-        {
-        hotkey, % menu_modifier_tl    . a_loopField, show_menu_tl
-        hotkey, % default_modifier_tl . a_loopField, run_default_tl
-        }
-    }
+hotkey, % menu_modifier_tl    . lab_number_tl, show_menu_tl
+hotkey, % default_modifier_tl . lab_number_tl, run_default_tl
+
 if (new_file_hotkey_tl)
     hotkey, % new_file_hotkey_tl, gui_new_file_tl
 
@@ -47,44 +42,50 @@ if (lab_labels_tl = "")
     msg_tl("no labels found")
     return
     }
-    ; main menu title
+    ; main menu
 lab_name_tl := "Lab " lab_number_tl
 if (default_label_tl)
     {
     splitPath, script_path_tl, filename_tl
     lab_name_tl .= "  (" filename_tl ")"
     }
-menu, lab_main_tl, add, % lab_name_tl, run_menu_tl
-menu, lab_main_tl, disable, % lab_name_tl
-menu, lab_main_tl, add
-    ; options menu
-menu, lab_options_tl, add, New Test File, gui_new_file_tl
-menu, lab_options_tl, add
-if (default_label_tl)
-    menu, lab_options_tl, add, Reset Default, menu_reset_tl
-else
-    {
-    menu, lab_options_tl, add,     Choose Default:, menu_reset_tl
-    menu, lab_options_tl, disable, Choose Default:
-    }
-menu, lab_options_tl, add
+menu, main_menu_tl, add, % lab_name_tl, run_menu_tl
+menu, main_menu_tl, disable, % lab_name_tl
+menu, main_menu_tl, add
     ; lab labels
 loop, parse, lab_labels_tl, `n
     {
-    menu, lab_main_tl,    add, % a_loopField, run_menu_tl
-    menu, lab_main_tl,   icon, % a_loopField, % a_scriptDir "\.data\" lab_number_tl ".ico"
-    menu, lab_options_tl, add, % a_loopField, set_default_tl
+    menu, main_menu_tl,    add, % a_loopField, run_menu_tl
+    menu, main_menu_tl,   icon, % a_loopField, % a_scriptDir "\.data\" lab_number_tl ".ico"
+    menu, default_menu_tl, add, % a_loopField, set_default_tl
     if (a_loopField = default_label_tl)
         {
-        menu, lab_main_tl,    default, % a_loopField
-        menu, lab_options_tl, default, % a_loopField
+        menu, main_menu_tl,    default, % a_loopField
+        menu, default_menu_tl, default, % a_loopField
         }
     }
-menu, lab_main_tl, add
-menu, lab_main_tl, add, Options, :lab_options_tl
-menu, lab_main_tl,    show
-menu, lab_main_tl,    delete
-menu, lab_options_tl, delete
+menu, main_menu_tl, add
+    ; reset or choose default
+if (default_label_tl)
+     menu, main_menu_tl, add, Reset Default,  menu_reset_tl
+else menu, main_menu_tl, add, Choose default, :default_menu_tl
+    ; options sub-menu
+menu, options_menu_tl, add, New Test File, gui_new_file_tl
+menu, options_menu_tl, add
+loop, 10
+    {
+    index_tl := a_index - 1
+    if (index_tl = lab_number_tl)
+        continue
+    menu, options_menu_tl, add,  Start Lab %index_tl%, start_lab_tl
+    menu, options_menu_tl, icon, Start Lab %index_tl%, % a_scriptDir "\.data\" index_tl ".ico"
+    }
+menu, main_menu_tl, add, Options, :options_menu_tl
+
+menu, main_menu_tl, show
+menu, main_menu_tl, delete
+menu, default_menu_tl, delete
+menu, options_menu_tl, delete
 return
 
 
@@ -119,6 +120,13 @@ reset_tl:
 default_label_tl := ""
 iniWrite, % "", % a_scriptDir "\.data\lab settings.ini", % lab_number_tl, default_label
 setup_lab_data_tl("")    ; clear file
+return
+
+
+start_lab_tl:
+start_num_tl := regExReplace(a_thisMenuItem, "[^0-9]")
+run, "%a_ahkPath%" "%a_scriptDir%\lab %start_num_tl%.ahk"
+msg_tl("lab " start_num_tl " started")
 return
 
 

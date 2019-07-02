@@ -59,8 +59,6 @@ sublime_text_active_file_tl()
 
 labs 0, 1, 2 and 3 are enabled by default. to enable the others add the number to the `labs` key, separated by a comma
 
-> each lab sets the all the same hotkeys so you only need to have one lab script added to the startup folder and then you can start the other labs from that one  
-
 #### save before  
 
 set this to `false` if you dont want the script you are working on to be saved when a label is run
