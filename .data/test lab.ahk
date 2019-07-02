@@ -1,6 +1,6 @@
 ﻿/*
 [script info]
-version     = 0.4
+version     = 0.4.1
 description = quick code testing using a single hotkey
 author      = davebrny
 source      = https://github.com/davebrny/test-lab
@@ -12,8 +12,8 @@ global default_label_tl, lab_number_tl, test_folder_tl
 lab_number_tl := regExReplace(a_scriptName, "[^0-9]")
 menu, tray, icon, % a_scriptDir "\.data\" lab_number_tl ".ico"
 
-settings_tl("settings")       ; global
-settings_tl(lab_number_tl)    ; individual lab
+settings_tl("user", "settings")
+settings_tl("lab", lab_number_tl)
 
 loop, parse, labs_tl, `, , % a_space   ;# set hotkeys
     {
@@ -107,7 +107,7 @@ return
 
 
 set_default_tl:
-iniWrite, % " " a_thisMenuItem, % a_scriptDir "\settings.ini", % lab_number_tl, default_label
+iniWrite, % " " a_thisMenuItem, % a_scriptDir "\.data\lab settings.ini", % lab_number_tl, default_label
 setup_lab_data_tl("#include, *i " . script_path_tl)
 msg_tl(a_thisMenuItem "`nset as default")
 return
@@ -117,7 +117,7 @@ menu_reset_tl:
 msg_tl("Lab " lab_number_tl " reset")
 reset_tl:
 default_label_tl := ""
-iniWrite, % "", % a_scriptDir "\settings.ini", % lab_number_tl, default_label
+iniWrite, % "", % a_scriptDir "\.data\lab settings.ini", % lab_number_tl, default_label
 setup_lab_data_tl("")    ; clear file
 return
 
@@ -129,9 +129,11 @@ if inStr(output_tl, active_file_tl())
 return
 
 
-settings_tl(ini_section_tl) {
+settings_tl(type, ini_section_tl) {
     local section_text_tl, ini_value_tl, pos
-    iniRead, section_text_tl, % a_scriptDir "\settings.ini", % ini_section_tl
+    if (type = "user")
+         iniRead, section_text_tl, % a_scriptDir "\settings.ini", % ini_section_tl
+    else iniRead, section_text_tl, % a_scriptDir "\.data\lab settings.ini", % ini_section_tl
     loop, parse, % section_text_tl, `n, `r
         {
         stringGetPos, pos, a_loopField, =, L1
@@ -148,7 +150,7 @@ lab_details_tl(byRef lab_number_tl, byRef lab_file_tl) {
         lab_number_tl := regExReplace(a_scriptName, "[^0-9]")
     splitPath, a_scriptFullPath, , dir, ext, name
     lab_file_tl := dir "\lab " lab_number_tl "." ext
-    settings_tl(lab_number_tl)
+    settings_tl("lab", lab_number_tl)
 }
 
 
@@ -175,7 +177,7 @@ lab_labels_tl(byRef lab_labels_tl, byRef script_path_tl) {
 
 
 lab_path_tl() {
-    iniRead, default_label_tl, % a_scriptDir "\settings.ini", % lab_number_tl, default_label
+    iniRead, default_label_tl, % a_scriptDir "\.data\lab settings.ini", % lab_number_tl, default_label
     if (default_label_tl = "")
         script_path := active_file_tl()
     else
