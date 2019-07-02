@@ -67,6 +67,8 @@ set this to `false` if you dont want the script you are working on to be saved w
 
 the hotkey that will be used to open the file creation gui, e.g. `^!n`  
 
+> you can also launch the gui by using the menu shortcuts: press the letter <kbd>O</kbd> when the menu is open, then the letter <kbd>N</kbd>
+
 #### test folder
 
 the folder where new test files will be created

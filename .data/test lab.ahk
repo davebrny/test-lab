@@ -1,6 +1,6 @@
 ﻿/*
 [script info]
-version     = 0.5.1
+version     = 0.5.2
 description = quick code testing using a single hotkey
 author      = davebrny
 source      = https://github.com/davebrny/test-lab
@@ -80,7 +80,7 @@ loop, 10
     menu, options_menu_tl, add,  Start Lab %index_tl%, start_lab_tl
     menu, options_menu_tl, icon, Start Lab %index_tl%, % a_scriptDir "\.data\" index_tl ".ico"
     }
-menu, main_menu_tl, add, Options, :options_menu_tl
+menu, main_menu_tl, add, &Options, :options_menu_tl
 
 menu, main_menu_tl, show
 menu, main_menu_tl, delete
