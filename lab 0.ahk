@@ -1,4 +1,4 @@
-#hotkeyInterval 99000000
+#hotkeyInterval 99000000    ; settings optimised for speed https://www.autohotkey.com/boards/viewtopic.php?t=6413
 #keyHistory 0
 #maxHotkeysPerInterval 99000000
 #noEnv
