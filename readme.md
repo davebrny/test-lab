@@ -15,9 +15,9 @@ these arent exactly a lot of effort on their own, but when you are making lots o
 - run any one of the lab files  (i will use `lab 3.ahk` as an example here)  
 - focus on an .ahk script in your editor  (see supported editors below)  
 - press <kbd>alt</kbd> + <kbd>3</kbd> to see a list of labels you can run  
-- <kbd>ctrl</kbd> + <kbd>3</kbd> will run the default label, which can be set in the `options` sub-menu  
+- <kbd>ctrl</kbd> + <kbd>3</kbd> will run the default label
 
-once a label is set as default, the script will be tied to that lab number and both hotkeys can be used even when the script youre working on isnt focused anymore.  if you want to remove the default at some point and choose another script the select "reset default" in the sub-menu  
+once a label is set as default, the script will be tied to that lab number and both hotkeys can be used even when the script youre working on isnt focused anymore  
 
 if the script you are running labels from is the one that is focused in the editor, then <kbd>ctrl</kbd> + <kbd>s</kbd> will be sent before the label is run  
 
@@ -46,9 +46,9 @@ to make it even easier to get new ideas started, there is a gui for creating new
 
 
 #### adding support  
-support for other editors can be added to the end of `\.data\script lab.ahk`.   the function should use the editor's process name (without .exe) at the start and `_active_file_tl()` after it:    
+support for other editors can be added to the end of `\.data\test lab.ahk`.   the function should use the editor's process name (without .exe) at the start and `_active_file_tl()` after it:    
 ```
-sublime_text_active_file_tl()
+atom_active_file_tl()
 ```
 
 &nbsp;
@@ -56,10 +56,6 @@ sublime_text_active_file_tl()
 ## [settings.ini](https://github.com/davebrny/test-lab/blob/master/settings.ini)
 
 > if youre changing any of these settings while others labs are running then select "reload all labs" in the options menu so the settings get applied to all of them  
-
-#### labs 
-
-labs 0, 1, 2 and 3 are enabled by default. to enable the others add the number to the `labs` key, separated by a comma
 
 #### save before  
 

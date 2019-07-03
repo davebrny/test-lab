@@ -75,7 +75,6 @@ menu, options_menu_tl, add
 menu, options_menu_tl, add, Reload all Labs, reload_all_tl
 menu, options_menu_tl, add, Close all Labs, close_all_tl
 menu, options_menu_tl, add, Close all other Labs, close_other_tl
-
 menu, options_menu_tl, add
 running_labs_tl := running_labs_tl()
 loop, 10
