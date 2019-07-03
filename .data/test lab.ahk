@@ -1,6 +1,6 @@
 ﻿/*
 [script info]
-version     = 0.5.3
+version     = 0.5.4
 description = quick code testing using a single hotkey
 author      = davebrny
 source      = https://github.com/davebrny/test-lab
@@ -131,19 +131,15 @@ return
 reload_all_tl:
 close_all_tl:
 close_other_tl:
+detectHiddenWindows, % ("on"), restore_dhw_tl := a_detectHiddenWindows
 this_lab_tl := a_scriptDir "\lab " lab_number_tl ".ahk"
-detectHiddenWindows, % ("on"), restore_dhw_tl := a_detectHiddenWindows 
-winGet, running_tl, list, ahk_class AutoHotkey
-loop % running_tl
+loop, parse, % running_labs_tl(), `n
     {
-    winGetTitle, title_tl, % "ahk_id " running_tl%a_index%
-    script_path_tl := regExReplace(title_tl, "\s-\sAutoHotkey\s.*")
-    if !inStr(script_path_tl, a_scriptDir "\lab")  ; skip other scripts
-    or (script_path_tl = this_lab_tl)              ; skip current lab
-        continue
+    if (a_loopField = this_lab_tl)
+        continue    ; skip current lab
     if (a_thisLabel = "reload_all_tl")    ;# other labs
-        run, "%a_ahkPath%" "%script_path_tl%"
-    else winClose, % script_path_tl " ahk_class AutoHotkey"
+         run, "%a_ahkPath%" "%a_loopField%"
+    else winClose, % a_loopField " ahk_class AutoHotkey"
     }
 if (a_thisLabel = "reload_all_tl")        ;# current lab
     run, "%a_ahkPath%" "%this_lab_tl%"
@@ -165,6 +161,21 @@ fileRead, output_tl, % a_scriptDir "\.data\lab " . lab_number_tl . " data.ahk"
 if inStr(output_tl, active_file_tl())
     send ^{s}    ; save if file is active/focused
 return
+
+
+running_labs_tl() {
+    detectHiddenWindows, % ("on"), restore_dhw := a_detectHiddenWindows
+    winGet, running, list, ahk_class AutoHotkey
+    loop % running
+        {
+        winGetTitle, title, % "ahk_id " running%a_index%
+        script_path := regExReplace(title, "\s-\sAutoHotkey\s.*")
+        if inStr(script_path, a_scriptDir "\lab")
+            path_list .= (path_list = "" ? "":"`n") . script_path
+        }
+    detectHiddenWindows, % restore_dhw
+    return path_list
+}
 
 
 settings_tl(type, ini_section_tl) {
