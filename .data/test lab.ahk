@@ -1,6 +1,6 @@
 ﻿/*
 [script info]
-version     = 0.5.2
+version     = 0.5.3
 description = quick code testing using a single hotkey
 author      = davebrny
 source      = https://github.com/davebrny/test-lab
@@ -67,18 +67,23 @@ loop, parse, lab_labels_tl, `n
 menu, main_menu_tl, add
     ; reset or choose default
 if (default_label_tl)
-     menu, main_menu_tl, add, Reset Default,  menu_reset_tl
+     menu, main_menu_tl, add, Reset default, menu_reset_tl
 else menu, main_menu_tl, add, Choose default, :default_menu_tl
     ; options sub-menu
-menu, options_menu_tl, add, New Test File, gui_new_file_tl
+menu, options_menu_tl, add, New test file, gui_new_file_tl
+menu, options_menu_tl, add
+menu, options_menu_tl, add, Reload all Labs, reload_all_tl
+menu, options_menu_tl, add, Close all Labs, close_all_tl
+menu, options_menu_tl, add, Close all other Labs, close_other_tl
+
 menu, options_menu_tl, add
 loop, 10
     {
     index_tl := a_index - 1
-    if (index_tl = lab_number_tl)
-        continue
     menu, options_menu_tl, add,  Start Lab %index_tl%, start_lab_tl
     menu, options_menu_tl, icon, Start Lab %index_tl%, % a_scriptDir "\.data\" index_tl ".ico"
+    if (index_tl = lab_number_tl)
+        menu, options_menu_tl, disable, Start Lab %index_tl%
     }
 menu, main_menu_tl, add, &Options, :options_menu_tl
 
@@ -120,6 +125,31 @@ reset_tl:
 default_label_tl := ""
 iniWrite, % "", % a_scriptDir "\.data\lab settings.ini", % lab_number_tl, default_label
 setup_lab_data_tl("")    ; clear file
+return
+
+
+reload_all_tl:
+close_all_tl:
+close_other_tl:
+this_lab_tl := a_scriptDir "\lab " lab_number_tl ".ahk"
+detectHiddenWindows, % ("on"), restore_dhw_tl := a_detectHiddenWindows 
+winGet, running_tl, list, ahk_class AutoHotkey
+loop % running_tl
+    {
+    winGetTitle, title_tl, % "ahk_id " running_tl%a_index%
+    script_path_tl := regExReplace(title_tl, "\s-\sAutoHotkey\s.*")
+    if !inStr(script_path_tl, a_scriptDir "\lab")  ; skip other scripts
+    or (script_path_tl = this_lab_tl)              ; skip current lab
+        continue
+    if (a_thisLabel = "reload_all_tl")    ;# other labs
+        run, "%a_ahkPath%" "%script_path_tl%"
+    else winClose, % script_path_tl " ahk_class AutoHotkey"
+    }
+if (a_thisLabel = "reload_all_tl")        ;# current lab
+    run, "%a_ahkPath%" "%this_lab_tl%"
+else if (a_thisLabel = "close_all_tl")
+    winClose, % this_lab_tl " ahk_class AutoHotkey"
+detectHiddenWindows, % restore_dhw_tl
 return
 
 

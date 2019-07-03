@@ -55,6 +55,8 @@ sublime_text_active_file_tl()
 
 ## [settings.ini](https://github.com/davebrny/test-lab/blob/master/settings.ini)
 
+> if youre changing any of these settings while others labs are running then select "reload all labs" in the options menu so the settings get applied to all of them  
+
 #### labs 
 
 labs 0, 1, 2 and 3 are enabled by default. to enable the others add the number to the `labs` key, separated by a comma
