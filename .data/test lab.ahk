@@ -1,6 +1,6 @@
 ﻿/*
 [script info]
-version     = 0.5.4
+version     = 0.5.5
 description = quick code testing using a single hotkey
 author      = davebrny
 source      = https://github.com/davebrny/test-lab
@@ -77,11 +77,13 @@ menu, options_menu_tl, add, Close all Labs, close_all_tl
 menu, options_menu_tl, add, Close all other Labs, close_other_tl
 
 menu, options_menu_tl, add
+running_labs_tl := running_labs_tl()
 loop, 10
     {
     index_tl := a_index - 1
     menu, options_menu_tl, add,  Start Lab %index_tl%, start_lab_tl
-    menu, options_menu_tl, icon, Start Lab %index_tl%, % a_scriptDir "\.data\" index_tl ".ico"
+    if inStr(running_labs_tl, "\lab " index_tl ".ahk")
+        menu, options_menu_tl, icon, Start Lab %index_tl%, % a_scriptDir "\.data\" index_tl ".ico"
     if (index_tl = lab_number_tl)
         menu, options_menu_tl, disable, Start Lab %index_tl%
     }
